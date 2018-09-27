@@ -33,11 +33,7 @@ public class showImage extends AppCompatActivity {
     TextView count;
     ImageView image;
     Button showImageButton;
-    CanvasImage canvasImage;
-    private RequestQueue queue;
-
-
-    private final static String url = "https://colaborativepicture.herokuapp.com/canvas/user";
+    public static CanvasImage canvasImage = new CanvasImage();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -47,8 +43,6 @@ public class showImage extends AppCompatActivity {
         count = (TextView)findViewById(R.id.counterText);
         image = (ImageView)findViewById(R.id.imageOriView);
         showImageButton = (Button)findViewById(R.id.showImageButton);
-
-        queue = Volley.newRequestQueue(showImage.this);
 
         showImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,17 +62,15 @@ public class showImage extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
 
-                //Guardo el response en un objeto JSON
-                JSONObject jsonObject = response;
+                JSONObject jsonObject = new JSONObject();
+                jsonObject=response;
 
-                //Se castea el id y la url
                 try {
-                    int id = (int)jsonObject.get("id");
-                    String canvasUrl = jsonObject.get("url").toString();
+                    canvasImage.setId((int)jsonObject.get("id"));
+                    canvasImage.setUrl(jsonObject.getString("url"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
@@ -86,7 +78,6 @@ public class showImage extends AppCompatActivity {
 
             }
         });
-        queue.add(request);
     }
 
     @Override
@@ -97,7 +88,7 @@ public class showImage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 obtenerDatosGet();
-                //startCountDown();
+                startCountDown();
             }
         });
     }
