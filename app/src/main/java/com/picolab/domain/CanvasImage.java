@@ -1,13 +1,13 @@
 package com.picolab.domain;
 
-public class Canvas {
+public class CanvasImage {
 
     private int id;
     private String url;
 
-    public Canvas(){}
+    public CanvasImage(){}
 
-    public Canvas(int id, String url){
+    public CanvasImage(int id, String url){
         this.id=id;
         this.url=url;
     }

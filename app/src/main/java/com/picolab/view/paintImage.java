@@ -179,6 +179,7 @@ public class paintImage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mSignatureView.clearDraw();
+                mSignatureView.setPaintColor(Color.BLACK);
             }
         });
     }
