@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "394306574283",
+    "firebase_url": "https://sendpicstofirebase.firebaseio.com",
+    "project_id": "sendpicstofirebase",
+    "storage_bucket": "sendpicstofirebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394306574283:android:7dbfe8e490c0c355",
+        "android_client_info": {
+          "package_name": "com.picolab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "394306574283-29ifag4avbuhqv45ql0ovtd184rrh5uv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXwpS1E01Dg3TdDCMu3dKiiplE1F8kbaM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

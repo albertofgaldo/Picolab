@@ -1,6 +1,7 @@
 package com.picolab.view;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -12,21 +13,35 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.picolab.R;
+import com.picolab.utils.GetCanvas;
 
 public class showImage extends AppCompatActivity {
 
     TextView count;
     ImageView image;
     Button showImageButton;
-    Thread thread = new Thread();
+    Canvas canvas;
+    GetCanvas getCanvas;
+
+    private final static String url = "https://colaborativepicture.herokuapp.com/canvas/user";
+    private TextView id, imageurl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_image);
+
+        getCanvas = new GetCanvas(this, url);
+        getCanvas.execute();
+
         count = (TextView)findViewById(R.id.counterText);
         image = (ImageView)findViewById(R.id.imageOriView);
         showImageButton = (Button)findViewById(R.id.showImageButton);
+    }
+
+    public void callBackData(String[] result) {
+        Toast.makeText(getApplicationContext(), "Temperature: "+result[1],
+                Toast.LENGTH_LONG).show();
     }
 
     @Override
