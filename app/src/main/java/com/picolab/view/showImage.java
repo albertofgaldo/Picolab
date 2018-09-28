@@ -1,7 +1,6 @@
 package com.picolab.view;
 
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -11,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.picolab.application.Controller.*;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,16 +18,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.picolab.R;
-import com.picolab.application.Controller.RequestsController;
 import com.picolab.domain.CanvasImage;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
-
-import java.net.URL;
 
 public class showImage extends AppCompatActivity {
 
@@ -68,6 +61,7 @@ public class showImage extends AppCompatActivity {
                 obtenerDatosGet();
                 loadImageFromUrl(canvasImage.getUrl());
                 startCountDown();
+                showImageButton.setEnabled(false);
             }
         });
     }
@@ -104,7 +98,7 @@ public class showImage extends AppCompatActivity {
     }
 
     private void loadImageFromUrl(String url){
-        Picasso.with(this).load(url).placeholder(R.mipmap.ic_launcher)
+        Picasso.with(showImage.this).load(url).placeholder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
                 .into(image, new com.squareup.picasso.Callback() {
                     @Override
@@ -132,6 +126,7 @@ public class showImage extends AppCompatActivity {
                 Toast.makeText(showImage.this,"Cuenta finalizada", Toast.LENGTH_SHORT).show();
                 Intent paintImage = new Intent(showImage.this, paintImage.class);
                 startActivity(paintImage);
+                finishAffinity();
             }
         }.start();
     }

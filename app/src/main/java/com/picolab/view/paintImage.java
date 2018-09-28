@@ -99,7 +99,8 @@ public class paintImage extends AppCompatActivity {
                     @Override
                     public void onDrawCreated(Bitmap draw) {
                         //TODO:Aqui ya puedes coger el Bitmap y hacer lo que quieras
-                        Toast.makeText(paintImage.this, "tengo el bitmap", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(paintImage.this, "tengo el bitmap, envíalo", Toast.LENGTH_SHORT).show();
+                        btn_save.setEnabled(false);
                     }
                     @Override
                     public void onDrawCreationError() {
