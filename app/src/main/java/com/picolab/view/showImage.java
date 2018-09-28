@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -82,17 +83,15 @@ public class showImage extends AppCompatActivity {
                     canvasImage.setId(id);
                     canvasImage.setUrl(urlCanvas);
                     loadImageFromUrl(canvasImage.getUrl());
-
-//                    Toast.makeText(showImage.this, "Id: " + canvasImage.getId(), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
+                    showToast("Error en el JSON");
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                showToast("Sin respuesta del Servidor");
             }
         });
         queue.add(request);
@@ -111,13 +110,13 @@ public class showImage extends AppCompatActivity {
 
                     @Override
                     public void onError() {
-
+                        showToast("No hay imagen para cargar");
                     }
                 });
     }
 
     public void startCountDown(){
-        new CountDownTimer(10000, 1000) {
+        new CountDownTimer(1000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 long l = millisUntilFinished / 1000;
@@ -128,10 +127,17 @@ public class showImage extends AppCompatActivity {
             public void onFinish() {
                 Toast.makeText(showImage.this,"Cuenta finalizada", Toast.LENGTH_SHORT).show();
                 Intent paintImage = new Intent(showImage.this, paintImage.class);
+                paintImage.putExtra("url",canvasImage.getUrl());
                 startActivity(paintImage);
                 finishAffinity();
             }
         }.start();
+    }
+
+    public void showToast(String text){
+        Toast toast = new Toast(showImage.this);
+        toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.makeText(showImage.this, text, Toast.LENGTH_SHORT).show();
     }
 
 }

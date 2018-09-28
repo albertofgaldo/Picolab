@@ -1,29 +1,28 @@
 package com.picolab.view;
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.picolab.R;
@@ -33,9 +32,12 @@ import com.rm.freedrawview.PathRedoUndoCountChangeListener;
 import com.rm.freedrawview.ResizeBehaviour;
 
 
-import org.w3c.dom.Text;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.picolab.view.showImage.canvasImage;
 
@@ -43,17 +45,19 @@ public class paintImage extends AppCompatActivity {
 
     FreeDrawView mSignatureView;
     Button btn_save;
+    ImageView image;
     TextView whiteButton, redButton, blueButton, yellowButton, greenButton, blackButton, orangeButton, pinkButton, purpleButton, skyButton, clearButton, grayButton;
-    //FirebaseStorage storage = FirebaseStorage.getInstance();
-
-
+    private RequestQueue queue;
     private Uri filePath;
+    String url =null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paintimage);
 
+        url = getIntent().getExtras().getString("url");
+        image = (ImageView)findViewById(R.id.imageOriView);
         whiteButton = (TextView)findViewById(R.id.colorWhiteButton);
         redButton = (TextView)findViewById(R.id.colorRedButton);
         blueButton = (TextView)findViewById(R.id.colorBlueButton);
@@ -122,8 +126,9 @@ public class paintImage extends AppCompatActivity {
                     @Override
                     public void onDrawCreated(Bitmap draw) {
                         //TODO:Aqui ya puedes coger el Bitmap y hacer lo que quieras
-                        Toast.makeText(paintImage.this, "Tu dibujo se ha enviado", Toast.LENGTH_SHORT).show();
+                        showToast("Tu dibujo se ha enviado");
                         uploadImage(draw);
+                        devolverDatosPut();
                         btn_save.setEnabled(false);
                     }
                     @Override
@@ -222,22 +227,62 @@ public class paintImage extends AppCompatActivity {
         // Create a reference to "mountains.jpg"
         StorageReference mountainsRef = storageRef.child(canvasImage.getId() + ".jpg");
 
-        // Create a reference to 'images/mountains.jpg'
-        //StorageReference mountainImagesRef = storageRef.child(canvasImage.getId() + ".jpg");
-
-        UploadTask uploadTask = mountainsRef.putBytes(data);
+        final UploadTask uploadTask = mountainsRef.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
+                showToast("El dibujo no se ha subido");
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-               // Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Task<Uri> downloadUrl = uploadTask.getResult().getMetadata().getReference().getDownloadUrl();
+                canvasImage.setUrl(downloadUrl.getResult().toString());
+                //devolverDatosPut();
             }
         });
+    }
+
+    private void devolverDatosPut() {
+
+        String url = "https://colaborativepicture.herokuapp.com/canvas/user";
+
+        StringRequest putRequest = new StringRequest(Request.Method.PUT, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                      //  Log.d("Response", response.toString());
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                       // Log.d("Error.Response", error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id",Integer.toString(canvasImage.getId()));
+                params.put("url", canvasImage.getUrl());
+
+                return params;
+            }
+        };
+        queue.add(putRequest);
+
+    }
+    public void showToast(String text){
+        Toast toast = new Toast(paintImage.this);
+        toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.makeText(paintImage.this, text, Toast.LENGTH_SHORT).show();
     }
 
 }
