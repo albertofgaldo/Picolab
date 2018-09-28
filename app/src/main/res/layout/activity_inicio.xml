@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/descriptionText"
-        android:layout_width="355dp"
+        android:layout_width="364dp"
         android:layout_height="272dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
@@ -23,12 +23,35 @@
 
     <ImageView
         android:id="@+id/imageTittle"
-        android:layout_width="133dp"
+        android:layout_width="115dp"
         android:layout_height="106dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:src="@mipmap/weplay"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageTittle2"
+        android:layout_width="115dp"
+        android:layout_height="106dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@mipmap/weplay"
+        app:layout_constraintStart_toEndOf="@+id/imageTittle"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageTittle3"
+        android:layout_width="115dp"
+        android:layout_height="106dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@mipmap/weplay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageTittle2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView

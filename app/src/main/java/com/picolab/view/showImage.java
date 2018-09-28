@@ -58,10 +58,9 @@ public class showImage extends AppCompatActivity {
         showImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 obtenerDatosGet();
-                loadImageFromUrl(canvasImage.getUrl());
-                startCountDown();
-                showImageButton.setEnabled(false);
+
             }
         });
     }
@@ -69,19 +68,21 @@ public class showImage extends AppCompatActivity {
     //PIDO LOS DATOS MEDIANTE GET
     private void obtenerDatosGet() {
 
-        String url = "https://colaborativepicture.herokuapp.com/canvas/user/";
+        String url = "https://colaborativepicture.herokuapp.com/canvas/user";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
-                JSONObject JsonCanvas = new JSONObject();
-                JsonCanvas = response;
+                JSONObject JsonCanvas = response;
+                //JsonCanvas = response;
                 try {
                     int id = Integer.parseInt(JsonCanvas.get("id").toString());
                     String urlCanvas = JsonCanvas.get("url").toString();
                     canvasImage.setId(id);
                     canvasImage.setUrl(urlCanvas);
+                    loadImageFromUrl(canvasImage.getUrl());
+
 //                    Toast.makeText(showImage.this, "Id: " + canvasImage.getId(), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -103,7 +104,9 @@ public class showImage extends AppCompatActivity {
                 .into(image, new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
-
+                        //findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                        startCountDown();
+                        showImageButton.setEnabled(false);
                     }
 
                     @Override

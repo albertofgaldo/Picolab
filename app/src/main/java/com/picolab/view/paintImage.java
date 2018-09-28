@@ -100,7 +100,16 @@ public class paintImage extends AppCompatActivity {
                     public void onDrawCreated(Bitmap draw) {
                         //TODO:Aqui ya puedes coger el Bitmap y hacer lo que quieras
                         Toast.makeText(paintImage.this, "tengo el bitmap, envíalo", Toast.LENGTH_SHORT).show();
-                        btn_save.setEnabled(false);
+
+                      /*  FriendlyMessage friendlyMessage = new
+                                FriendlyMessage(mMessageEditText.getText().toString(),
+                                mUsername,
+                                mPhotoUrl,
+                                null *//* no image *//*);
+                        mFirebaseDatabaseReference.child(MESSAGES_CHILD)
+                                .push().setValue(friendlyMessage);
+                        mMessageEditText.setText("");
+                        btn_save.setEnabled(false);*/
                     }
                     @Override
                     public void onDrawCreationError() {
