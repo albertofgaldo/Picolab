@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.picolab.application.Controller.*;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.picolab.R;
+import com.picolab.application.Controller.RequestsController;
 import com.picolab.domain.CanvasImage;
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +36,9 @@ public class showImage extends AppCompatActivity {
     TextView count;
     ImageView image;
     Button showImageButton;
-    public static CanvasImage canvasImage = new CanvasImage();
+
+    private RequestQueue queue;
+    protected static CanvasImage canvasImage = new CanvasImage();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -45,6 +49,8 @@ public class showImage extends AppCompatActivity {
         image = (ImageView)findViewById(R.id.imageOriView);
         showImageButton = (Button)findViewById(R.id.showImageButton);
 
+        queue = Volley.newRequestQueue(this);
+
         showImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,25 +59,40 @@ public class showImage extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                obtenerDatosGet();
+                loadImageFromUrl(canvasImage.getUrl());
+                startCountDown();
+            }
+        });
+    }
+
     //PIDO LOS DATOS MEDIANTE GET
     private void obtenerDatosGet() {
 
-        String url = "https://colaborativepicture.herokuapp.com/canvas/user";
+        String url = "https://colaborativepicture.herokuapp.com/canvas/user/";
 
-        //Genero el request on la url
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
-                JSONObject jsonObject = new JSONObject();
-                jsonObject=response;
-
+                JSONObject JsonCanvas = new JSONObject();
+                JsonCanvas = response;
                 try {
-                    canvasImage.setId((int)jsonObject.get("id"));
-                    canvasImage.setUrl(jsonObject.getString("url"));
+                    int id = Integer.parseInt(JsonCanvas.get("id").toString());
+                    String urlCanvas = JsonCanvas.get("url").toString();
+                    canvasImage.setId(id);
+                    canvasImage.setUrl(urlCanvas);
+//                    Toast.makeText(showImage.this, "Id: " + canvasImage.getId(), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -79,6 +100,7 @@ public class showImage extends AppCompatActivity {
 
             }
         });
+        queue.add(request);
     }
 
     private void loadImageFromUrl(String url){
@@ -95,19 +117,6 @@ public class showImage extends AppCompatActivity {
 
                     }
                 });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showImageButton.setOnClickListener(
-                new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                obtenerDatosGet();
-                startCountDown();
-            }
-        });
     }
 
     public void startCountDown(){
