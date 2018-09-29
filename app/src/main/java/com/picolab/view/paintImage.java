@@ -291,15 +291,16 @@ public class paintImage extends AppCompatActivity {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Task<Uri> downloadUrl = uploadTask.getResult().getMetadata().getReference().getDownloadUrl();
-                canvasImage.setUrl(downloadUrl.getResult().toString());
+                //recogemos la url de la imagen subida
+                canvasImage.setUrl(downloadUrl.getResult().toString()); //poner break point aquí
                 devolverDatosPut();
             }
         });
     }
 
     private void devolverDatosPut() {
-       
 
+        //poner break point aquí
         String url = "https://colaborativepicture.herokuapp.com/canvas/user";
 
         RequestQueue queue = Volley.newRequestQueue(this);
