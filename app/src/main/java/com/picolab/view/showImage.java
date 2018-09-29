@@ -117,7 +117,7 @@ public class showImage extends AppCompatActivity {
     }
 
     public void startCountDown(){
-        new CountDownTimer(1000, 1000) {
+        new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 long l = millisUntilFinished / 1000;
@@ -126,7 +126,7 @@ public class showImage extends AppCompatActivity {
             }
 
             public void onFinish() {
-                Toast.makeText(showImage.this,"Cuenta finalizada", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(showImage.this,"Cuenta finalizada", Toast.LENGTH_SHORT).show();
                 Intent paintImage = new Intent(showImage.this, paintImage.class);
                 paintImage.putExtra("url",canvasImage.getUrl());
                 startActivity(paintImage);

@@ -24,6 +24,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -140,7 +142,7 @@ public class paintImage extends AppCompatActivity {
                     public void onDrawCreated(Bitmap draw) {
                         //TODO:Aqui ya puedes coger el Bitmap y hacer lo que quieras
                         uploadImage(draw);
-                        showToast("Tu dibujo se ha enviado");
+                        //showToast("Tu dibujo se ha enviado");
                         btn_save.setEnabled(false);
                     }
                     @Override
@@ -277,25 +279,43 @@ public class paintImage extends AppCompatActivity {
         StorageReference storageRef = storage.getReferenceFromUrl("gs://picolab-c4b9b.appspot.com");
 
         // Create a reference to "mountains.jpg"
-        StorageReference mountainsRef = storageRef.child(canvasImage.getId() + ".jpg");
-
+        final StorageReference mountainsRef = storageRef.child(canvasImage.getId() + ".jpg");
+        final StorageReference ref = null;
         final UploadTask uploadTask = mountainsRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+
+
+        uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                showToast("El dibujo no se ha subido");
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return mountainsRef.getDownloadUrl();
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Task<Uri> downloadUrl = uploadTask.getResult().getMetadata().getReference().getDownloadUrl();
-                //recogemos la url de la imagen subida
-                canvasImage.setUrl(downloadUrl.getResult().toString()); //poner break point aquí
-                devolverDatosPut();
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    //System.out.println("Upload " + downloadUri);
+                    showToast("Tu dibujo se ha enviado");
+                    // Toast.makeText(mActivity, "Successfully uploaded", Toast.LENGTH_SHORT).show();
+                    if (downloadUri != null) {
+
+                        canvasImage.setUrl(downloadUri.toString()); //YOU WILL GET THE DOWNLOAD URL HERE !!!!
+                        devolverDatosPut();
+
+                    }
+
+                } else {
+                    // Handle failures
+                    // ...
+                }
             }
         });
+
     }
 
     private void devolverDatosPut() {
