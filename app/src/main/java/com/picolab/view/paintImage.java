@@ -139,7 +139,7 @@ public class paintImage extends AppCompatActivity {
                         //TODO:Aqui ya puedes coger el Bitmap y hacer lo que quieras
                         showToast("Tu dibujo se ha enviado");
                         uploadImage(draw);
-                        devolverDatosPut();
+                        //devolverDatosPut();
                         btn_save.setEnabled(false);
                     }
                     @Override
@@ -291,7 +291,7 @@ public class paintImage extends AppCompatActivity {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Task<Uri> downloadUrl = uploadTask.getResult().getMetadata().getReference().getDownloadUrl();
                 canvasImage.setUrl(downloadUrl.getResult().toString());
-                //devolverDatosPut();
+                devolverDatosPut();
             }
         });
     }
@@ -306,10 +306,12 @@ public class paintImage extends AppCompatActivity {
         try {
             jsonObject.put("id", canvasImage.getId());
             jsonObject.put("url", canvasImage.getUrl());
-        } catch (JSONException e) {
-            // handle exception        }
+        }
+        catch (JSONException e) {
+        }
+        // handle exception        }
 
-              JsonObjectRequest putRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
+        JsonObjectRequest putRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
                 new Response.Listener<JSONObject>()
                 {
                     @Override
@@ -327,7 +329,6 @@ public class paintImage extends AppCompatActivity {
                     }
                 }
         ) {
-
             @Override
             public Map<String, String> getHeaders()
             {
@@ -351,10 +352,9 @@ public class paintImage extends AppCompatActivity {
                 return null;
             }
         };
-
         queue.add(putRequest);
         }
-    }
+
 
     private void loadImageFromUrl(String url){
         Picasso.with(paintImage.this).load(url).placeholder(R.mipmap.ic_launcher)
