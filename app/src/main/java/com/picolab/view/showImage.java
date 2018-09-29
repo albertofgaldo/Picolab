@@ -83,6 +83,7 @@ public class showImage extends AppCompatActivity {
                     canvasImage.setId(id);
                     canvasImage.setUrl(urlCanvas);
                     loadImageFromUrl(canvasImage.getUrl());
+
                 } catch (JSONException e) {
                     showToast("Error en el JSON");
                     e.printStackTrace();
@@ -98,7 +99,7 @@ public class showImage extends AppCompatActivity {
     }
 
     private void loadImageFromUrl(String url){
-        Picasso.with(showImage.this).load(url).placeholder(R.mipmap.ic_launcher)
+        Picasso.with(showImage.this).load(url).resize(850,850).placeholder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
                 .into(image, new com.squareup.picasso.Callback() {
                     @Override

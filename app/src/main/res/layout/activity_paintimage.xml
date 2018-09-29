@@ -6,6 +6,40 @@
     android:layout_height="match_parent"
     tools:context=".view.paintImage">
 
+    <TextView
+        android:id="@+id/textViewFino"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/black"
+        android:text="Fino"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPincel"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/textViewNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Normal"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewFino"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/textViewGrueso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Grueso"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewNormal"
+        tools:ignore="MissingConstraints" />
+
     <Button
         android:id="@+id/btn_save"
         android:layout_width="377dp"
@@ -31,7 +65,7 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="33dp"
+        android:layout_height="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -117,7 +151,7 @@
 
         <TextView
             android:id="@+id/colorPinkButton"
-            android:layout_width="4dp"
+            android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_weight="1"
             android:background="#EB17BC"
@@ -164,8 +198,8 @@
 
     <ImageView
         android:id="@+id/imageOriView"
-        android:layout_width="90dp"
-        android:layout_height="92dp"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/parentView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -173,4 +207,17 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@mipmap/weplay" />
+
+    <TextView
+        android:id="@+id/textViewPincel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Selección pincel:"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        tools:ignore="MissingConstraints" />
+
 </android.support.constraint.ConstraintLayout>

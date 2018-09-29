@@ -13,29 +13,37 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.picolab.R;
 import com.rm.freedrawview.FreeDrawView;
 import com.rm.freedrawview.PathDrawnListener;
 import com.rm.freedrawview.PathRedoUndoCountChangeListener;
 import com.rm.freedrawview.ResizeBehaviour;
-
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,10 +54,10 @@ public class paintImage extends AppCompatActivity {
     FreeDrawView mSignatureView;
     Button btn_save;
     ImageView image;
-    TextView whiteButton, redButton, blueButton, yellowButton, greenButton, blackButton, orangeButton, pinkButton, purpleButton, skyButton, clearButton, grayButton;
+    TextView whiteButton, redButton, blueButton, yellowButton, greenButton, blackButton, orangeButton, pinkButton, purpleButton, skyButton, clearButton, grayButton, textViewFino, textViewNormal, textViewGrueso;
     private RequestQueue queue;
     private Uri filePath;
-    String url =null;
+    String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +78,13 @@ public class paintImage extends AppCompatActivity {
         skyButton = (TextView)findViewById(R.id.colorSkyButton);
         grayButton = (TextView)findViewById(R.id.colorGrayButton);
         clearButton = (TextView)findViewById(R.id.clearButton);
+        textViewFino = (TextView)findViewById(R.id.textViewFino);
+        textViewNormal = (TextView)findViewById(R.id.textViewNormal);
+        textViewGrueso = (TextView)findViewById(R.id.textViewGrueso);
         btn_save = (Button) findViewById(R.id.btn_save);
         mSignatureView = (FreeDrawView) findViewById(R.id.parentView);
 
-       // mSignatureView.setPaintColor(Color.BLACK); //modifica el color con el que pinta
+
         mSignatureView.setPaintWidthPx(12);
         //mSignatureView.setPaintWidthPx(12);
         mSignatureView.setPaintWidthDp(12);
@@ -212,6 +223,46 @@ public class paintImage extends AppCompatActivity {
                 mSignatureView.setPaintColor(Color.BLACK);
             }
         });
+        textViewFino.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textViewFino.setBackgroundColor(Color.BLACK);
+                textViewFino.setTextColor(Color.WHITE);
+                textViewNormal.setBackgroundColor(Color.WHITE);
+                textViewNormal.setTextColor(Color.BLACK);
+                textViewGrueso.setBackgroundColor(Color.WHITE);
+                textViewGrueso.setTextColor(Color.BLACK);
+                mSignatureView.setPaintWidthPx(12);
+                mSignatureView.setPaintWidthDp(12);
+            }
+        });
+        textViewNormal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textViewNormal.setBackgroundColor(Color.BLACK);
+                textViewNormal.setTextColor(Color.WHITE);
+                textViewGrueso.setBackgroundColor(Color.WHITE);
+                textViewGrueso.setTextColor(Color.BLACK);
+                textViewFino.setBackgroundColor(Color.WHITE);
+                textViewFino.setTextColor(Color.BLACK);
+                mSignatureView.setPaintWidthPx(25);
+                mSignatureView.setPaintWidthDp(25);
+            }
+        });
+        textViewGrueso.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textViewGrueso.setBackgroundColor(Color.BLACK);
+                textViewGrueso.setTextColor(Color.WHITE);
+                textViewNormal.setBackgroundColor(Color.WHITE);
+                textViewNormal.setTextColor(Color.BLACK);
+                textViewFino.setBackgroundColor(Color.WHITE);
+                textViewFino.setTextColor(Color.BLACK);
+                mSignatureView.setPaintWidthPx(50);
+                mSignatureView.setPaintWidthDp(50);
+            }
+        });
+        loadImageFromUrl(url);
     }
 
     private void uploadImage(Bitmap draw) {
@@ -249,13 +300,22 @@ public class paintImage extends AppCompatActivity {
 
         String url = "https://colaborativepicture.herokuapp.com/canvas/user";
 
-        StringRequest putRequest = new StringRequest(Request.Method.PUT, url,
-                new Response.Listener<String>()
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        final JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("id", canvasImage.getId());
+            jsonObject.put("url", canvasImage.getUrl());
+        } catch (JSONException e) {
+            // handle exception        }
+
+              JsonObjectRequest putRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
+                new Response.Listener<JSONObject>()
                 {
                     @Override
-                    public void onResponse(String response) {
+                    public void onResponse(JSONObject response) {
                         // response
-                      //  Log.d("Response", response.toString());
+                        // Log.d("Response", response.toString());
                     }
                 },
                 new Response.ErrorListener()
@@ -263,26 +323,70 @@ public class paintImage extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
-                       // Log.d("Error.Response", error.toString());
+                        // Log.d("Error.Response", error.toString());
                     }
                 }
         ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("id",Integer.toString(canvasImage.getId()));
-                params.put("url", canvasImage.getUrl());
 
-                return params;
+            @Override
+            public Map<String, String> getHeaders()
+            {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+            @Override
+            public byte[] getBody() {
+
+                try {
+                    // Log.i("json", jsonObject.toString());
+                    return jsonObject.toString().getBytes("UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                return null;
             }
         };
-        queue.add(putRequest);
 
+        queue.add(putRequest);
+        }
     }
+
+    private void loadImageFromUrl(String url){
+        Picasso.with(paintImage.this).load(url).placeholder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+                .into(image, new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        //findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        showToast("No hay imagen para cargar");
+                    }
+                });
+    }
+
+
     public void showToast(String text){
         Toast toast = new Toast(paintImage.this);
         toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
         toast.makeText(paintImage.this, text, Toast.LENGTH_SHORT).show();
     }
+
+    public JsonObject parseCanvas(){
+
+        JsonObject obj = new JsonObject();
+        obj.addProperty("id",canvasImage.getId());
+        obj.addProperty("url",canvasImage.getUrl());
+
+        return obj;
+    }
+
 
 }
