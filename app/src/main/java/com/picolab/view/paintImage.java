@@ -46,8 +46,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.picolab.view.showImage.canvasImage;
+import static java.lang.Thread.sleep;
 
 public class paintImage extends AppCompatActivity {
 
@@ -137,9 +139,8 @@ public class paintImage extends AppCompatActivity {
                     @Override
                     public void onDrawCreated(Bitmap draw) {
                         //TODO:Aqui ya puedes coger el Bitmap y hacer lo que quieras
-                        showToast("Tu dibujo se ha enviado");
                         uploadImage(draw);
-                        //devolverDatosPut();
+                        showToast("Tu dibujo se ha enviado");
                         btn_save.setEnabled(false);
                     }
                     @Override
@@ -297,6 +298,7 @@ public class paintImage extends AppCompatActivity {
     }
 
     private void devolverDatosPut() {
+       
 
         String url = "https://colaborativepicture.herokuapp.com/canvas/user";
 
